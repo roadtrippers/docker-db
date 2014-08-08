@@ -1,5 +1,7 @@
-USER=${USER:-super}
+USER=${USER:-deploy}
 PASS=${PASS:-$(pwgen -s -1 16)}
+DB=${DB:-roadtrippers}
+DATA_DIR=${DATA_DIR:-/db}
 
 pre_start_action() {
   # Echo out info to later obtain by running `docker logs container_name`
@@ -33,6 +35,7 @@ post_start_action() {
 EOF
 
   # create database if requested
+  echo "Creating the database: $DB"
   if [ ! -z "$DB" ]; then
     for db in $DB; do
       echo "Creating database: $db"
@@ -41,6 +44,8 @@ EOF
       GRANT ALL ON DATABASE $db TO $USER
 EOF
     done
+  else
+    echo "DB not created: $DB"
   fi
 
   if [[ ! -z "$EXTENSIONS" && ! -z "$DB" ]]; then
