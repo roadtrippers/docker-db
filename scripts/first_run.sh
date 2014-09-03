@@ -1,7 +1,10 @@
+#!/bin/bash
+
 USER=${USER:-deploy}
 PASS=${PASS:-$(pwgen -s -1 16)}
 DB=${DB:-roadtrippers}
 DATA_DIR=${DATA_DIR:-/db}
+
 
 pre_start_action() {
   # Echo out info to later obtain by running `docker logs container_name`
@@ -48,17 +51,14 @@ EOF
     echo "DB not created: $DB"
   fi
 
-  if [[ ! -z "$EXTENSIONS" && ! -z "$DB" ]]; then
-    for extension in $EXTENSIONS; do
-      for db in $DB; do
-        echo "Installing extension for $db: $extension"
-        # enable the extension for the user's database
-        setuser postgres psql $db <<-EOF
-        CREATE EXTENSION "$extension";
+  for db in $DB; do
+    echo "Installing extension for $db: fuzzystrmatch and postgis"
+    # enable the extension for the user's database
+    setuser postgres psql $db <<-EOF
+    CREATE EXTENSION postgis;
+    CREATE EXTENSION fuzzystrmatch;
 EOF
-      done
-    done
-  fi
+  done
 
   rm /firstrun
 }

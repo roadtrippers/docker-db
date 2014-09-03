@@ -17,7 +17,8 @@ RUN sudo apt-get update -y \
  && sudo echo "deb http://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main" > /etc/apt/sources.list.d/pgdg.list \
  && sudo apt-get update -y
 
-RUN sudo apt-get install -y \ 
+RUN sudo apt-get update -y && \
+  sudo apt-get install -y \ 
   libgdal-dev \
   libspatialite-dev \
   libgeos-dev \
@@ -26,6 +27,7 @@ RUN sudo apt-get install -y \
   build-essential \
   postgresql-9.2 \
   postgresql-server-dev-9.2 \ 
+  postgresql-contrib-9.2 \
   libxml2-dev \ 
   libproj-dev \ 
   libjson0-dev \ 
@@ -68,16 +70,6 @@ RUN touch /firstrun
 
 RUN mkdir /etc/service/postgresql
 RUN ln -s /scripts/start.sh /etc/service/postgresql/run
-
-
-#RUN service postgresql start && /bin/su postgres -c "createuser -d -s -r -l deploy" && /bin/su postgres -c "psql postgres -c \"ALTER USER deploy WITH ENCRYPTED PASSWORD 'roadtrippers'\"" && /bin/su postgres -c "psql postgres -c \"CREATE DATABASE rt_dev WITH OWNER = deploy\"" && /bin/su postgres -c "psql rt_dev -c \"CREATE EXTENSION postgis;\"" && service postgresql stop
-#RUN mkdir -p /db/postgresql/9.2/main \
-#  && chown -R postgres /db/postgresql/9.2/main \
-#  && su postgres sh -c "/usr/lib/postgresql/9.2/bin/initdb /db/postgresql/9.2/main" 
-#
-#RUN service postgresql start \
-#  && /bin/su postgres -c "createuser -d -s -r -l deploy" \
-#  && /bin/su postgres -c "psql postgres -c \"ALTER USER deploy WITH ENCRYPTED PASSWORD 'roadtrippers'\"" 
 
 VOLUME ["/db", "/var/log/postgresql", "/etc/postgresql"]
 
