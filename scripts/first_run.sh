@@ -57,6 +57,7 @@ EOF
     setuser postgres psql $db <<-EOF
     CREATE EXTENSION postgis;
     CREATE EXTENSION fuzzystrmatch;
+    CREATE EXTENSION pg_trgm;
 EOF
   done
 
